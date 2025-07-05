@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-)tuxihb12a4qly(e^+yd-jhq^*r^gf=^v__t19_!8v$5&t=--c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [os.environ.get('RENDER_EXTERNAL_HOSTNAME', 'localhost')]
 
 
 # Application definition
@@ -81,7 +81,6 @@ DATABASES = {
     }
 }
 
-ALLOWED_HOSTS = [os.environ.get('RENDER_EXTERNAL_HOSTNAME', 'localhost')]
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
