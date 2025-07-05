@@ -5,129 +5,164 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hasil Lacak Resi</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* Ambil dari style input baraya sebelumnya */
     :root {
       --primary: #4361ee;
       --secondary: #3f37c9;
       --accent: #4895ef;
       --dark: #212529;
       --light: #f8f9fa;
-      --danger: #f72585;
     }
     body {
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      padding: 20px;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 20px;
       min-height: 100vh;
     }
     .app-container {
+      background: white;
       width: 100%;
-      max-width: 500px;
-      background: #fff;
+      max-width: 600px;
       border-radius: 16px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
       overflow: hidden;
     }
     .app-header {
       background: linear-gradient(to right, var(--primary), var(--secondary));
-      color: white;
       padding: 25px;
+      color: white;
       text-align: center;
+    }
+    .app-icon {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 15px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .app-icon i {
+      color: var(--primary);
+      font-size: 1.5rem;
     }
     .app-body {
       padding: 25px;
     }
+    .summary-card {
+      background-color: #f1f5f9;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .timeline {
+      border-left: 3px solid var(--accent);
+      margin-bottom: 20px;
+    }
+    .timeline-item {
+      padding-left: 15px;
+      margin-bottom: 15px;
+      position: relative;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -9px;
+      top: 3px;
+      width: 12px;
+      height: 12px;
+      background-color: var(--accent);
+      border-radius: 50%;
+    }
     .btn {
       display: block;
-      background: var(--primary);
-      color: white;
-      padding: 12px;
+      width: 100%;
+      padding: 14px;
       text-align: center;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: white;
+      border: none;
       border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
       text-decoration: none;
       margin-top: 20px;
     }
     #map {
-      height: 300px;
-      margin-top: 20px;
-      border-radius: 12px;
-    }
-    .timeline {
-      margin-top: 20px;
-      font-size: 0.9rem;
-    }
-    .timeline-item {
-      margin-bottom: 15px;
-    }
-    .timeline-item strong {
-      color: var(--primary);
+      height: 250px;
+      margin-top: 15px;
+      border-radius: 10px;
     }
   </style>
 </head>
 <body>
   <div class="app-container">
     <div class="app-header">
+      <div class="app-icon">
+        <i class="fas fa-truck-fast"></i>
+      </div>
       <h1>Hasil Pelacakan</h1>
       <p>Nomor Resi: <strong>{{ data.no_resi }}</strong></p>
     </div>
-
     <div class="app-body">
       {% if error %}
-        <div style="color: var(--danger); margin-bottom: 20px;">
-          {{ error }}
-        </div>
-      {% else %}
-        <p><strong>Kurir:</strong> {{ data.kurir }}</p>
-        <p><strong>Estimasi:</strong> {{ data.estimasi }}</p>
-        <p><strong>Status:</strong> {{ data.status }}</p>
-        <p><strong>Lokasi Terakhir:</strong> {{ data.lokasi }}</p>
-        <p><strong>Waktu:</strong> {{ data.waktu }}</p>
-        <p><strong>Penerima:</strong> {{ data.penerima }}</p>
-        <p><strong>Alamat:</strong> {{ data.alamat }}</p>
+        <div style="color: red; text-align: center; margin-bottom: 15px;">{{ error }}</div>
+      {% endif %}
 
-        <div id="map"></div>
+      {% if data %}
+        <div class="summary-card">
+          <strong>Kurir:</strong> {{ data.kurir }}<br>
+          {% if data.estimasi != 'N/A' %}
+            <strong><i class="fas fa-clock"></i> Estimasi:</strong> {{ data.estimasi }}<br>
+          {% endif %}
+          <strong>Status:</strong> {{ data.status }}
+        </div>
+
+        {% if data.penerima != 'N/A' or data.alamat != 'N/A' %}
+          <div class="summary-card">
+            <strong><i class="fas fa-user"></i> Penerima:</strong>
+            {% if data.penerima != 'N/A' %}
+              <div>{{ data.penerima }}</div>
+            {% endif %}
+            {% if data.alamat != 'N/A' %}
+              <div style="font-size: 0.9rem; color: #64748b;">{{ data.alamat }}</div>
+            {% endif %}
+          </div>
+        {% endif %}
 
         <div class="timeline">
-          <h3>Riwayat Pengiriman</h3>
-          {% for h in data.history %}
+          <h4>Riwayat Pengiriman:</h4>
+          {% for item in data.history %}
             <div class="timeline-item">
-              <strong>{{ h.desc }}</strong><br />
-              {{ h.location }} - {{ h.date }}
+              <div><strong>{{ item.status }}</strong></div>
+              <div>{{ item.lokasi }}</div>
+              <div style="font-size: 0.9rem;"><i class="far fa-clock"></i> {{ item.waktu }}</div>
             </div>
           {% endfor %}
         </div>
+
+        <div id="map"></div>
       {% endif %}
 
-      <a href="{% url 'index' %}" class="btn">← Kembali</a>
+      <a href="{% url 'index' %}" class="btn"><i class="fas fa-arrow-left"></i> Kembali</a>
     </div>
   </div>
 
   <script>
-    const alamat = "{{ data.alamat|escapejs }}";
-    const map = L.map('map').setView([-6.2, 106.8], 10); // default center
-
+    const map = L.map('map').setView([-6.2, 106.8], 10);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 18,
+      attribution: '&copy; OpenStreetMap',
     }).addTo(map);
-
-    // Geocode alamat
-    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${alamat}`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.length > 0) {
-          const lat = parseFloat(data[0].lat);
-          const lon = parseFloat(data[0].lon);
-          map.setView([lat, lon], 15);
-          L.marker([lat, lon]).addTo(map).bindPopup("Perkiraan lokasi penerima").openPopup();
-        }
-      })
-      .catch(err => console.error("Geocoding gagal:", err));
+    L.marker([-6.2, 106.8]).addTo(map)
+      .bindPopup("Lokasi default pengiriman")
+      .openPopup();
   </script>
 </body>
 </html>
