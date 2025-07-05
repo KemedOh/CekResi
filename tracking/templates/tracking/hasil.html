@@ -3,115 +3,419 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hasil Cek Resi</title>
+    <title>Hasil Lacak Resi - Cek Pengiriman</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --success: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --delivered: #4ade80;
+            --transit: #f59e0b;
+            --pending: #94a3b8;
+        }
+        
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            color: #333;
+            padding: 20px;
+            color: var(--dark);
         }
         
-        .container {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            padding: 30px;
+        .app-container {
             width: 100%;
             max-width: 500px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
         }
         
-        h1 {
-            color: #2c3e50;
+        .app-header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
             text-align: center;
-            margin-bottom: 30px;
-            font-size: 24px;
+            position: relative;
         }
         
-        .result-card {
-            background-color: #f9f9f9;
-            border-radius: 8px;
+        .app-header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .app-header p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .app-body {
+            padding: 25px;
+        }
+        
+        .summary-card {
+            background: white;
+            border-radius: 12px;
             padding: 20px;
             margin-bottom: 25px;
-            border-left: 4px solid #3498db;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--accent);
         }
         
-        .result-item {
+        .summary-item {
+            display: flex;
             margin-bottom: 15px;
-            line-height: 1.6;
+            align-items: center;
         }
         
-        .result-item strong {
-            color: #2c3e50;
+        .summary-icon {
+            width: 36px;
+            height: 36px;
+            background-color: rgba(72, 149, 239, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: var(--accent);
+            font-size: 1rem;
+        }
+        
+        .summary-content {
+            flex: 1;
+        }
+        
+        .summary-label {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-bottom: 2px;
+        }
+        
+        .summary-value {
+            font-weight: 500;
+            font-size: 1rem;
+        }
+        
+        .status-badge {
             display: inline-block;
-            width: 80px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
         }
         
-        .not-found {
-            text-align: center;
-            color: #e74c3c;
-            font-weight: 600;
-            padding: 20px;
+        .status-delivered {
+            background-color: rgba(74, 222, 128, 0.1);
+            color: var(--delivered);
+        }
+        
+        .status-transit {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--transit);
+        }
+        
+        .status-pending {
+            background-color: rgba(148, 163, 184, 0.1);
+            color: var(--pending);
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin: 25px 0;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 11px;
+            top: 5px;
+            height: calc(100% - 10px);
+            width: 2px;
+            background-color: #e2e8f0;
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-bottom: 20px;
+        }
+        
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+        
+        .timeline-dot {
+            position: absolute;
+            left: -30px;
+            top: 0;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: white;
+            border: 4px solid var(--accent);
+            z-index: 1;
+        }
+        
+        .timeline-dot.active {
+            background-color: var(--accent);
+        }
+        
+        .timeline-content {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 12px 15px;
+        }
+        
+        .timeline-date {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-bottom: 5px;
+        }
+        
+        .timeline-status {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .timeline-location {
+            font-size: 0.85rem;
+            color: #475569;
         }
         
         .btn-back {
             display: inline-block;
-            background-color: #3498db;
+            padding: 14px 20px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
             color: white;
-            text-decoration: none;
-            padding: 12px 20px;
-            border-radius: 5px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
             font-weight: 600;
-            text-align: center;
-            transition: background-color 0.3s;
+            cursor: pointer;
+            transition: all 0.3s;
             width: 100%;
-            box-sizing: border-box;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
+            text-decoration: none;
         }
         
         .btn-back:hover {
-            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(67, 97, 238, 0.4);
         }
         
-        .status {
-            font-weight: 600;
-            color: #27ae60;
+        .btn-back i {
+            margin-right: 8px;
+        }
+        
+        .not-found {
+            text-align: center;
+            padding: 30px;
+            color: var(--danger);
+        }
+        
+        .not-found-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--danger);
+            opacity: 0.7;
+        }
+        
+        .not-found h3 {
+            margin-bottom: 10px;
+        }
+        
+        .not-found p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        
+        .progress-tracker {
+            margin: 30px 0;
+            position: relative;
+            height: 6px;
+            background-color: #e2e8f0;
+            border-radius: 3px;
+        }
+        
+        .progress-bar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            border-radius: 3px;
+            width: 75%; /* Adjust this based on actual progress */
+        }
+        
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        
+        .progress-step {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #64748b;
+            position: relative;
+            width: 25%;
+        }
+        
+        .progress-step.active {
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .progress-step::before {
+            content: '';
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #e2e8f0;
+            border: 2px solid white;
+        }
+        
+        .progress-step.active::before {
+            background-color: var(--primary);
+        }
+        
+        @media (max-width: 480px) {
+            .app-container {
+                border-radius: 12px;
+            }
+            
+            .app-header {
+                padding: 15px;
+            }
+            
+            .app-body {
+                padding: 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Hasil Pelacakan Resi</h1>
+    <div class="app-container">
+        <div class="app-header">
+            <h1>Hasil Pelacakan Resi</h1>
+            <p>Detail status pengiriman paket Anda</p>
+        </div>
         
-        {% if data %}
-            <div class="result-card">
-                <div class="result-item">
-                    <strong>No Resi:</strong> {{ data.no_resi }}
+        <div class="app-body">
+            {% if data %}
+                <div class="summary-card">
+                    <div class="summary-item">
+                        <div class="summary-icon">
+                            <i class="fas fa-barcode"></i>
+                        </div>
+                        <div class="summary-content">
+                            <div class="summary-label">Nomor Resi</div>
+                            <div class="summary-value">{{ data.no_resi }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-item">
+                        <div class="summary-icon">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <div class="summary-content">
+                            <div class="summary-label">Kurir</div>
+                            <div class="summary-value">{{ data.kurir|upper }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-item">
+                        <div class="summary-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="summary-content">
+                            <div class="summary-label">Status</div>
+                            <div class="summary-value">
+                                <span class="status-badge 
+                                    {% if 'terkirim' in data.status|lower %}status-delivered
+                                    {% elif 'transit' in data.status|lower or 'dalam perjalanan' in data.status|lower %}status-transit
+                                    {% else %}status-pending{% endif %}">
+                                    {{ data.status }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="result-item">
-                    <strong>Kurir:</strong> {{ data.kurir|upper }}
+                
+                <!-- Progress Tracker -->
+                <div class="progress-tracker">
+                    <div class="progress-bar" style="width: 
+                        {% if 'terkirim' in data.status|lower %}100%
+                        {% elif 'transit' in data.status|lower or 'dalam perjalanan' in data.status|lower %}66%
+                        {% else %}33%{% endif %}">
+                    </div>
+                    <div class="progress-steps">
+                        <div class="progress-step {% if 'diterima' in data.status|lower or 'transit' in data.status|lower or 'terkirim' in data.status|lower %}active{% endif %}">
+                            Diterima
+                        </div>
+                        <div class="progress-step {% if 'transit' in data.status|lower or 'terkirim' in data.status|lower %}active{% endif %}">
+                            Dalam Pengiriman
+                        </div>
+                        <div class="progress-step {% if 'terkirim' in data.status|lower %}active{% endif %}">
+                            Terkirim
+                        </div>
+                    </div>
                 </div>
-                <div class="result-item">
-                    <strong>Status:</strong> <span class="status">{{ data.status }}</span>
+                
+                <!-- Timeline -->
+                <h3 style="margin-bottom: 15px; font-size: 1.1rem;">
+                    <i class="fas fa-history" style="margin-right: 8px; color: var(--accent);"></i> Riwayat Pengiriman
+                </h3>
+                
+                <div class="timeline">
+                    {% for history in data.history %}
+                    <div class="timeline-item">
+                        <div class="timeline-dot {% if loop.first %}active{% endif %}"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">{{ history.waktu }}</div>
+                            <div class="timeline-status">{{ history.status }}</div>
+                            <div class="timeline-location">{{ history.lokasi }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
-                <div class="result-item">
-                    <strong>Lokasi:</strong> {{ data.lokasi }}
+            {% else %}
+                <div class="not-found">
+                    <div class="not-found-icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <h3>Data tidak ditemukan</h3>
+                    <p>Nomor resi yang Anda cari tidak ditemukan dalam sistem kami</p>
                 </div>
-                <div class="result-item">
-                    <strong>Waktu:</strong> {{ data.waktu }}
-                </div>
-            </div>
-        {% else %}
-            <div class="not-found">
-                <p>Data tidak ditemukan.</p>
-            </div>
-        {% endif %}
-        
-        <a href="{% url 'index' %}" class="btn-back">Cek Resi Lainnya</a>
+            {% endif %}
+            
+            <a href="{% url 'index' %}" class="btn-back">
+                <i class="fas fa-search"></i> Cek Resi Lainnya
+            </a>
+        </div>
     </div>
 </body>
 </html>

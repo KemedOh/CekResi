@@ -3,126 +3,350 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cek Resi Pengiriman</title>
+    <title>Lacak Resi - Cek Pengiriman</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* CSS yang Anda sediakan sudah bagus, tidak perlu diubah */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --success: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --danger: #f72585;
+            --warning: #f8961e;
+        }
+        
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            color: #333;
+            padding: 20px;
+            color: var(--dark);
         }
         
-        .container {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            padding: 30px;
+        .app-container {
             width: 100%;
             max-width: 500px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
         }
         
-        h1 {
-            color: #2c3e50;
+        .app-header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 25px;
             text-align: center;
-            margin-bottom: 30px;
-            font-size: 24px;
+            position: relative;
+        }
+        
+        .app-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .app-header p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .app-icon {
+            background: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .app-icon i {
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+        
+        .app-body {
+            padding: 25px;
         }
         
         .form-group {
             margin-bottom: 20px;
         }
         
-        label {
+        .form-label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 600;
-            color: #2c3e50;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 0.95rem;
         }
         
-        input[type="text"], select {
+        .form-input {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            box-sizing: border-box;
-            transition: border-color 0.3s;
+            padding: 14px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background-color: #f8f9fa;
         }
         
-        input[type="text"]:focus, select:focus {
-            border-color: #3498db;
+        .form-input:focus {
+            border-color: var(--accent);
             outline: none;
-            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
         }
         
-        button {
-            background-color: #3498db;
+        .select-wrapper {
+            position: relative;
+        }
+        
+        .select-wrapper::after {
+            content: '\f078';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            color: var(--dark);
+            pointer-events: none;
+        }
+        
+        .form-select {
+            appearance: none;
+            width: 100%;
+            padding: 14px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            background-color: #f8f9fa;
+            cursor: pointer;
+        }
+        
+        .form-select:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 14px 20px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
             color: white;
             border: none;
-            padding: 12px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
+            border-radius: 10px;
+            font-size: 1rem;
             font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
             width: 100%;
-            transition: background-color 0.3s;
-        }
-        
-        button:hover {
-            background-color: #2980b9;
-        }
-        
-        .courier-logo {
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
-
-        .error-message { /* Tambahkan style untuk pesan error */
-            color: red;
             text-align: center;
-            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(67, 97, 238, 0.4);
+        }
+        
+        .btn i {
+            margin-right: 8px;
+        }
+        
+        .error-message {
+            color: var(--danger);
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 12px;
+            background-color: rgba(247, 37, 133, 0.1);
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .courier-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .courier-item {
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .courier-item:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+        
+        .courier-item.active {
+            border-color: var(--primary);
+            background-color: rgba(67, 97, 238, 0.1);
+        }
+        
+        .courier-icon {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+        
+        .courier-name {
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 480px) {
+            .app-container {
+                border-radius: 12px;
+            }
+            
+            .app-header {
+                padding: 20px;
+            }
+            
+            .app-body {
+                padding: 20px;
+            }
+            
+            .courier-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Cek Resi Pengiriman</h1>
-
-        {# Menampilkan pesan error jika ada dari views.py #}
-        {% if error %}
-            <p class="error-message">{{ error }}</p>
-        {% endif %}
-
-        <form action="{% url 'hasil' %}" method="POST"> {# Pastikan 'hasil' sesuai dengan nama URL Anda #}
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="no_resi">Nomor Resi</label>
-                <input type="text" id="no_resi" name="no_resi" placeholder="Masukkan nomor resi" required>
+    <div class="app-container">
+        <div class="app-header">
+            <div class="app-icon">
+                <i class="fas fa-truck-fast"></i>
             </div>
+            <h1>Lacak Resi</h1>
+            <p>Cek status pengiriman paket Anda</p>
+        </div>
+        
+        <div class="app-body">
+            {% if error %}
+                <div class="error-message">
+                    <i class="fas fa-exclamation-circle"></i> {{ error }}
+                </div>
+            {% endif %}
             
-            <div class="form-group">
-                <label for="kurir">Pilih Kurir</label>
-                <select id="kurir" name="kurir" required>
-                    <option value="">-- Pilih Kurir --</option> {# Opsi default untuk validasi #}
-                    {% for kurir_item in daftar_kurir %} {# Loop melalui daftar kurir dari views.py #}
-                        <option value="{{ kurir_item.kode }}">{{ kurir_item.nama }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            
-            <button type="submit">
-                <span>Cek Resi</span>
-            </button>
-        </form>
+            <form action="{% url 'hasil' %}" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="no_resi" class="form-label">
+                        <i class="fas fa-barcode"></i> Nomor Resi
+                    </label>
+                    <input type="text" id="no_resi" name="no_resi" class="form-input" 
+                           placeholder="Contoh: 1234567890" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="kurir" class="form-label">
+                        <i class="fas fa-truck"></i> Pilih Kurir
+                    </label>
+                    <div class="select-wrapper">
+                        <select id="kurir" name="kurir" class="form-select" required>
+                            <option value="">-- Pilih Kurir --</option>
+                            {% for kurir_item in daftar_kurir %}
+                                <option value="{{ kurir_item.kode }}">{{ kurir_item.nama }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="courier-grid">
+                        <div class="courier-item" data-kurir="jne">
+                            <div class="courier-icon"><i class="fas fa-box"></i></div>
+                            <div class="courier-name">JNE</div>
+                        </div>
+                        <div class="courier-item" data-kurir="jnt">
+                            <div class="courier-icon"><i class="fas fa-shipping-fast"></i></div>
+                            <div class="courier-name">J&T</div>
+                        </div>
+                        <div class="courier-item" data-kurir="sicepat">
+                            <div class="courier-icon"><i class="fas fa-rocket"></i></div>
+                            <div class="courier-name">SiCepat</div>
+                        </div>
+                        <div class="courier-item" data-kurir="anteraja">
+                            <div class="courier-icon"><i class="fas fa-bolt"></i></div>
+                            <div class="courier-name">Anteraja</div>
+                        </div>
+                        <div class="courier-item" data-kurir="pos">
+                            <div class="courier-icon"><i class="fas fa-envelope"></i></div>
+                            <div class="courier-name">POS</div>
+                        </div>
+                        <div class="courier-item" data-kurir="tiki">
+                            <div class="courier-icon"><i class="fas fa-truck-moving"></i></div>
+                            <div class="courier-name">TIKI</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn">
+                    <i class="fas fa-search"></i> Lacak Resi
+                </button>
+            </form>
+        </div>
     </div>
+
+    <script>
+        // JavaScript untuk courier selection
+        document.addEventListener('DOMContentLoaded', function() {
+            const courierItems = document.querySelectorAll('.courier-item');
+            const kurirSelect = document.getElementById('kurir');
+            
+            courierItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // Remove active class from all items
+                    courierItems.forEach(i => i.classList.remove('active'));
+                    
+                    // Add active class to clicked item
+                    this.classList.add('active');
+                    
+                    // Update select value
+                    const kurirCode = this.getAttribute('data-kurir');
+                    kurirSelect.value = kurirCode;
+                });
+            });
+            
+            // Update visual selection when dropdown changes
+            kurirSelect.addEventListener('change', function() {
+                const selectedValue = this.value;
+                courierItems.forEach(item => {
+                    item.classList.remove('active');
+                    if (item.getAttribute('data-kurir') === selectedValue) {
+                        item.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
