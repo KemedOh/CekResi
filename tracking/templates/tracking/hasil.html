@@ -2,435 +2,319 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hasil Lacak Resi - Cek Pengiriman</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234361ee'><path d='M8 17a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm8 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3-6V7a1 1 0 0 0-1-1h-2V4a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h1a2 2 0 1 0 4 0h6a2 2 0 1 0 4 0h1a1 1 0 0 0 1-1zm-5-5h2v4h-2V6z'/></svg>">
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCXEbAfQkc1Voi4l8-XiK7ZpCWd6CM1RAs&callback=initMap" async defer></script>
-    <style>
-        #map {
-            height: 300px;
-            width: 100%;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #4361ee;
-            --secondary: #3f37c9;
-            --accent: #4895ef;
-            --success: #4cc9f0;
-            --light: #f8f9fa;
-            --dark: #212529;
-            --danger: #f72585;
-            --warning: #f8961e;
-            --delivered: #4ade80;
-            --transit: #f59e0b;
-            --pending: #94a3b8;
-        }
-        
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            color: var(--dark);
-        }
-        
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hasil Lacak Resi</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' fill='%234361ee' viewBox='0 0 24 24'><path d='M8 17a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm8 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3-6V7a1 1 0 0 0-1-1h-2V4a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h1a2 2 0 1 0 4 0h6a2 2 0 1 0 4 0h1a1 1 0 0 0 1-1zm-5-5h2v4h-2V6z'/></svg>">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+        --primary: #4361ee;
+        --secondary: #3f37c9;
+        --accent: #4895ef;
+        --success: #4cc9f0;
+        --light: #f8f9fa;
+        --dark: #212529;
+        --danger: #f72585;
+        --warning: #f8961e;
+    }
+    
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+    
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        color: var(--dark);
+    }
+    
+    .app-container {
+        width: 100%;
+        max-width: 500px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .app-header {
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        color: white;
+        padding: 25px;
+        text-align: center;
+        position: relative;
+    }
+    
+    .app-header h1 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    
+    .app-header p {
+        opacity: 0.9;
+        font-size: 0.9rem;
+    }
+    
+    .app-icon {
+        background: white;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .app-icon i {
+        color: var(--primary);
+        font-size: 1.8rem;
+    }
+    
+    .app-body {
+        padding: 25px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--dark);
+        font-size: 0.95rem;
+    }
+    
+    .form-input {
+        width: 100%;
+        padding: 14px 15px;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s;
+        background-color: #f8f9fa;
+    }
+    
+    .form-input:focus {
+        border-color: var(--accent);
+        outline: none;
+        background-color: white;
+        box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
+    }
+    
+    .select-wrapper {
+        position: relative;
+    }
+    
+    .select-wrapper::after {
+        content: '\f078';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        position: absolute;
+        top: 50%;
+        right: 15px;
+        transform: translateY(-50%);
+        color: var(--dark);
+        pointer-events: none;
+    }
+    
+    .form-select {
+        appearance: none;
+        width: 100%;
+        padding: 14px 15px;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        font-size: 1rem;
+        background-color: #f8f9fa;
+        cursor: pointer;
+    }
+    
+    .form-select:focus {
+        border-color: var(--accent);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 14px 20px;
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(67, 97, 238, 0.4);
+    }
+    
+    .btn i {
+        margin-right: 8px;
+    }
+    
+    .error-message {
+        color: var(--danger);
+        text-align: center;
+        margin-bottom: 20px;
+        padding: 12px;
+        background-color: rgba(247, 37, 133, 0.1);
+        border-radius: 8px;
+        font-size: 0.9rem;
+    }
+    
+    .courier-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 15px;
+    }
+    
+    .courier-item {
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 10px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .courier-item:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+    }
+    
+    .courier-item.active {
+        border-color: var(--primary);
+        background-color: rgba(67, 97, 238, 0.1);
+    }
+    
+    .courier-icon {
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+        color: var(--primary);
+    }
+    
+    .courier-name {
+        font-size: 0.7rem;
+        font-weight: 500;
+    }
+    
+    .hidden {
+        display: none;
+    }
+    
+    @media (max-width: 480px) {
         .app-container {
-            width: 100%;
-            max-width: 500px;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            transition: all 0.3s ease;
+            border-radius: 12px;
         }
         
         .app-header {
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            color: white;
             padding: 20px;
-            text-align: center;
-            position: relative;
-        }
-        
-        .app-header h1 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        
-        .app-header p {
-            opacity: 0.9;
-            font-size: 0.9rem;
         }
         
         .app-body {
-            padding: 25px;
-        }
-        
-        .summary-card {
-            background: white;
-            border-radius: 12px;
             padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            border-left: 4px solid var(--accent);
         }
         
-        .summary-item {
-            display: flex;
-            margin-bottom: 15px;
-            align-items: center;
+        .courier-grid {
+            grid-template-columns: repeat(2, 1fr);
         }
-        
-        .summary-icon {
-            width: 36px;
-            height: 36px;
-            background-color: rgba(72, 149, 239, 0.1);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            color: var(--accent);
-            font-size: 1rem;
-        }
-        
-        .summary-content {
-            flex: 1;
-        }
-        
-        .summary-label {
-            font-size: 0.8rem;
-            color: #64748b;
-            margin-bottom: 2px;
-        }
-        
-        .summary-value {
-            font-weight: 500;
-            font-size: 1rem;
-        }
-        
-        .status-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        
-        .status-delivered {
-            background-color: rgba(74, 222, 128, 0.1);
-            color: var(--delivered);
-        }
-        
-        .status-transit {
-            background-color: rgba(245, 158, 11, 0.1);
-            color: var(--transit);
-        }
-        
-        .status-pending {
-            background-color: rgba(148, 163, 184, 0.1);
-            color: var(--pending);
-        }
-        
-        .timeline {
-            position: relative;
-            padding-left: 30px;
-            margin: 25px 0;
-        }
-        
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 11px;
-            top: 5px;
-            height: calc(100% - 10px);
-            width: 2px;
-            background-color: #e2e8f0;
-        }
-        
-        .timeline-item {
-            position: relative;
-            padding-bottom: 20px;
-        }
-        
-        .timeline-item:last-child {
-            padding-bottom: 0;
-        }
-        
-        .timeline-dot {
-            position: absolute;
-            left: -30px;
-            top: 0;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background-color: white;
-            border: 4px solid var(--accent);
-            z-index: 1;
-        }
-        
-        .timeline-dot.active {
-            background-color: var(--accent);
-        }
-        
-        .timeline-content {
-            background: #f8fafc;
-            border-radius: 8px;
-            padding: 12px 15px;
-        }
-        
-        .timeline-date {
-            font-size: 0.75rem;
-            color: #64748b;
-            margin-bottom: 5px;
-        }
-        
-        .timeline-status {
-            font-weight: 500;
-            margin-bottom: 5px;
-        }
-        
-        .timeline-location {
-            font-size: 0.85rem;
-            color: #475569;
-        }
-        
-        .btn-back {
-            display: inline-block;
-            padding: 14px 20px;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
-            text-decoration: none;
-        }
-        
-        .btn-back:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(67, 97, 238, 0.4);
-        }
-        
-        .btn-back i {
-            margin-right: 8px;
-        }
-        
-        .not-found {
-            text-align: center;
-            padding: 30px;
-            color: var(--danger);
-        }
-        
-        .not-found-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            color: var(--danger);
-            opacity: 0.7;
-        }
-        
-        .not-found h3 {
-            margin-bottom: 10px;
-        }
-        
-        .not-found p {
-            color: #64748b;
-            font-size: 0.9rem;
-        }
-        
-        .progress-tracker {
-            margin: 30px 0;
-            position: relative;
-            height: 6px;
-            background-color: #e2e8f0;
-            border-radius: 3px;
-        }
-        
-        .progress-bar {
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            background: linear-gradient(to right, var(--primary), var(--accent));
-            border-radius: 3px;
-            width: 75%; /* Adjust this based on actual progress */
-        }
-        
-        .progress-steps {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-        }
-        
-        .progress-step {
-            text-align: center;
-            font-size: 0.7rem;
-            color: #64748b;
-            position: relative;
-            width: 25%;
-        }
-        
-        .progress-step.active {
-            color: var(--primary);
-            font-weight: 500;
-        }
-        
-        .progress-step::before {
-            content: '';
-            position: absolute;
-            top: -16px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: #e2e8f0;
-            border: 2px solid white;
-        }
-        
-        .progress-step.active::before {
-            background-color: var(--primary);
-        }
-        
-        @media (max-width: 480px) {
-            .app-container {
-                border-radius: 12px;
-            }
-            
-            .app-header {
-                padding: 15px;
-            }
-            
-            .app-body {
-                padding: 20px;
-            }
-        }
-    </style>
+    }
+</style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="delivery-header">
-            <div class="courier-info">
-                <div class="courier-logo">
-                    <img src="{% static 'images/'|add:data.kurir|lower|add:'.png' %}" alt="{{ data.kurir }} Logo">
-                </div>
-                <div class="courier-name">{{ data.kurir }}</div>
-            </div>
-            <div id="map"></div>
-            <div class="resi-number">
-                <span>No. Resi: {{ data.no_resi }}</span>
-                <button class="copy-btn">
-                    <i class="far fa-copy"></i> Salin
-                </button>
-            </div>
-
-            <div class="delivery-estimation">
-                <i class="fas fa-clock"></i>
-                <span>{{ data.estimasi }}</span>
-            </div>
-        </div>
-
-        <!-- Timeline -->
-        <div class="timeline-header">
-            <h3>Riwayat Pengiriman</h3>
-            <button class="refresh-btn">
-                <i class="fas fa-sync-alt"></i> Refresh
-            </button>
-        </div>
-
-        <div class="timeline">
-            {% for item in data.history %}
-            <div class="timeline-item {% if item.active %}active{% endif %}">
-                <div class="timeline-dot {% if item.active %}active{% elif forloop.first %}in-transit{% endif %}">
-                    <i class="fas fa-{% if item.active or forloop.last %}check{% else %}truck{% endif %}"></i>
-                </div>
-                <div class="timeline-content">
-                    <div class="timeline-status">{{ item.status }}</div>
-                    <div class="timeline-location">{{ item.lokasi }}</div>
-                    <div class="timeline-date">
-                        <i class="far fa-clock"></i> {{ item.waktu }}
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-
-        <!-- Informasi Penerima -->
-        <div class="additional-info">
-            <div class="info-card">
-                <div class="info-title">
-                    <i class="fas fa-user"></i> Penerima
-                </div>
-                <p>{{ data.penerima }}</p>
-                <p>{{ data.alamat }}</p>
-            </div>
-            
-            <button class="contact-btn">
-                <i class="fas fa-headset"></i> Hubungi Kurir
-            </button>
-        </div>
+  <div class="app-container">
+    <!-- Header -->
+    <div class="app-header">
+      <div class="app-icon">
+        <i class="fas fa-truck"></i>
+      </div>
+      <h1>Hasil Pelacakan</h1>
+      <p>Status paket untuk No. Resi: <strong>{{ data.no_resi }}</strong></p>
     </div>
 
-    <script src="{% static 'js/script.js' %}"></script>
-<script>
+    <div class="app-body">
+      <!-- Kurir & Estimasi -->
+      <div class="summary-card">
+        <div style="display: flex; align-items: center; gap: 15px;">
+          <img src="{% static 'images/'|add:data.kurir|lower|add:'.png' %}" alt="{{ data.kurir }}" style="height: 40px;">
+          <div>
+            <div style="font-weight: 600;">{{ data.kurir }}</div>
+            <div style="font-size: 0.85rem; color: #64748b;">
+              <i class="fas fa-clock"></i> Estimasi: {{ data.estimasi }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline Pengiriman -->
+      <div class="timeline">
+        {% for item in data.history %}
+        <div class="timeline-item {% if item.active %}active{% endif %}">
+          <div class="timeline-dot">
+            <i class="fas fa-{% if item.active or forloop.last %}check{% else %}truck{% endif %}"></i>
+          </div>
+          <div class="timeline-content">
+            <div class="timeline-status">{{ item.status }}</div>
+            <div class="timeline-location">{{ item.lokasi }}</div>
+            <div class="timeline-date">
+              <i class="far fa-clock"></i> {{ item.waktu }}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Penerima -->
+      <div class="summary-card">
+        <div style="margin-bottom: 8px; font-weight: 600;">
+          <i class="fas fa-user"></i> Penerima
+        </div>
+        <div>{{ data.penerima }}</div>
+        <div style="font-size: 0.9rem; color: #64748b;">{{ data.alamat }}</div>
+      </div>
+
+      <a href="{% url 'home' %}" class="btn"><i class="fas fa-arrow-left"></i> Kembali</a>
+    </div>
+  </div>
+
+  <!-- Script untuk peta -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCXEbAfQkc1Voi4l8-XiK7ZpCWd6CM1RAs&callback=initMap" async defer></script>
+  <script>
     function initMap() {
-        // Lokasi default (misalnya, pusat kota Jakarta)
-        const defaultLocation = { lat: -6.2088, lng: 106.8456 };
+      const defaultLocation = { lat: -6.2088, lng: 106.8456 };
+      const map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 10,
+        center: defaultLocation,
+      });
 
-        // Membuat objek peta baru
-        const map = new google.maps.Map(document.getElementById("map"), {
-            zoom: 10, // Tingkat zoom awal
-            center: defaultLocation, // Pusat peta awal
-        });
-
-        // Tambahkan marker
-        new google.maps.Marker({
-            position: defaultLocation,
-            map: map,
-            title: "Lokasi Default"
-        });
+      new google.maps.Marker({
+        position: defaultLocation,
+        map: map,
+        title: "Lokasi Default"
+      });
     }
-</script>
-
-        function initMap() {
-            // Lokasi default (misalnya, pusat kota Jakarta)
-            const defaultLocation = { lat: -6.2088, lng: 106.8456 };
-        
-            // Membuat objek peta baru
-            const map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 10, // Tingkat zoom awal
-                center: defaultLocation, // Pusat peta awal
-            });
-        
-            // Anda bisa menambahkan marker, polyline, dll. di sini
-            // Contoh: Menambahkan marker di lokasi default
-            new google.maps.Marker({
-                position: defaultLocation,
-                map: map,
-                title: "Lokasi Default"
-            });
-        }
+  </script>
 </body>
 </html>
