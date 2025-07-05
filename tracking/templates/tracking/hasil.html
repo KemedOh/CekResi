@@ -7,241 +7,154 @@
   <title>Hasil Lacak Resi</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' fill='%234361ee' viewBox='0 0 24 24'><path d='M8 17a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm8 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3-6V7a1 1 0 0 0-1-1h-2V4a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h1a2 2 0 1 0 4 0h6a2 2 0 1 0 4 0h1a1 1 0 0 0 1-1zm-5-5h2v4h-2V6z'/></svg>">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-sA+e2u9UzH3msye4U8R+qwFgU4E6LDbi9zW+U0hP+zg=" crossorigin=""/>
+
   <style>
     :root {
-        --primary: #4361ee;
-        --secondary: #3f37c9;
-        --accent: #4895ef;
-        --success: #4cc9f0;
-        --light: #f8f9fa;
-        --dark: #212529;
-        --danger: #f72585;
-        --warning: #f8961e;
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --accent: #4895ef;
+      --success: #4cc9f0;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --danger: #f72585;
+      --warning: #f8961e;
     }
-    
+
     * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-    
+
     body {
-        font-family: 'Poppins', sans-serif;
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-        color: var(--dark);
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      color: var(--dark);
     }
-    
+
     .app-container {
-        width: 100%;
-        max-width: 500px;
-        background: white;
-        border-radius: 16px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        transition: all 0.3s ease;
+      width: 100%;
+      max-width: 500px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: all 0.3s ease;
     }
-    
+
     .app-header {
-        background: linear-gradient(to right, var(--primary), var(--secondary));
-        color: white;
-        padding: 25px;
-        text-align: center;
-        position: relative;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: white;
+      padding: 25px;
+      text-align: center;
     }
-    
-    .app-header h1 {
-        font-size: 1.8rem;
-        font-weight: 600;
-        margin-bottom: 5px;
-    }
-    
-    .app-header p {
-        opacity: 0.9;
-        font-size: 0.9rem;
-    }
-    
+
     .app-icon {
-        background: white;
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: 0 auto 15px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      background: white;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     }
-    
+
     .app-icon i {
-        color: var(--primary);
-        font-size: 1.8rem;
+      color: var(--primary);
+      font-size: 1.8rem;
     }
-    
+
     .app-body {
-        padding: 25px;
+      padding: 25px;
     }
-    
-    .form-group {
-        margin-bottom: 20px;
+
+    .summary-card {
+      background: var(--light);
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 0 1px #e9ecef;
     }
-    
-    .form-label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: 500;
-        color: var(--dark);
-        font-size: 0.95rem;
+
+    .timeline {
+      margin-bottom: 20px;
     }
-    
-    .form-input {
-        width: 100%;
-        padding: 14px 15px;
-        border: 2px solid #e9ecef;
-        border-radius: 10px;
-        font-size: 1rem;
-        transition: all 0.3s;
-        background-color: #f8f9fa;
+
+    .timeline-item {
+      display: flex;
+      align-items: start;
+      margin-bottom: 15px;
     }
-    
-    .form-input:focus {
-        border-color: var(--accent);
-        outline: none;
-        background-color: white;
-        box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
+
+    .timeline-dot {
+      width: 20px;
+      height: 20px;
+      background: var(--accent);
+      color: white;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 20px;
+      margin-right: 10px;
+      font-size: 0.8rem;
     }
-    
-    .select-wrapper {
-        position: relative;
+
+    .timeline-content {
+      font-size: 0.9rem;
     }
-    
-    .select-wrapper::after {
-        content: '\f078';
-        font-family: 'Font Awesome 6 Free';
-        font-weight: 900;
-        position: absolute;
-        top: 50%;
-        right: 15px;
-        transform: translateY(-50%);
-        color: var(--dark);
-        pointer-events: none;
+
+    .timeline-status {
+      font-weight: 600;
+      margin-bottom: 2px;
     }
-    
-    .form-select {
-        appearance: none;
-        width: 100%;
-        padding: 14px 15px;
-        border: 2px solid #e9ecef;
-        border-radius: 10px;
-        font-size: 1rem;
-        background-color: #f8f9fa;
-        cursor: pointer;
+
+    .timeline-location {
+      color: #64748b;
     }
-    
-    .form-select:focus {
-        border-color: var(--accent);
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
+
+    .timeline-date {
+      font-size: 0.8rem;
+      color: #adb5bd;
     }
-    
+
     .btn {
-        display: inline-block;
-        padding: 14px 20px;
-        background: linear-gradient(to right, var(--primary), var(--secondary));
-        color: white;
-        border: none;
-        border-radius: 10px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s;
-        width: 100%;
-        text-align: center;
-        box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
+      display: inline-block;
+      padding: 14px 20px;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
+      text-decoration: none;
     }
-    
+
     .btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(67, 97, 238, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(67, 97, 238, 0.4);
     }
-    
-    .btn i {
-        margin-right: 8px;
+
+    #map {
+      height: 300px;
+      border-radius: 12px;
+      margin-bottom: 20px;
     }
-    
-    .error-message {
-        color: var(--danger);
-        text-align: center;
-        margin-bottom: 20px;
-        padding: 12px;
-        background-color: rgba(247, 37, 133, 0.1);
-        border-radius: 8px;
-        font-size: 0.9rem;
-    }
-    
-    .courier-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-        margin-top: 15px;
-    }
-    
-    .courier-item {
-        border: 1px solid #e9ecef;
-        border-radius: 8px;
-        padding: 10px;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-    
-    .courier-item:hover {
-        border-color: var(--accent);
-        transform: translateY(-2px);
-    }
-    
-    .courier-item.active {
-        border-color: var(--primary);
-        background-color: rgba(67, 97, 238, 0.1);
-    }
-    
-    .courier-icon {
-        font-size: 1.5rem;
-        margin-bottom: 5px;
-        color: var(--primary);
-    }
-    
-    .courier-name {
-        font-size: 0.7rem;
-        font-weight: 500;
-    }
-    
-    .hidden {
-        display: none;
-    }
-    
-    @media (max-width: 480px) {
-        .app-container {
-            border-radius: 12px;
-        }
-        
-        .app-header {
-            padding: 20px;
-        }
-        
-        .app-body {
-            padding: 20px;
-        }
-        
-        .courier-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-</style>
+  </style>
 </head>
 <body>
   <div class="app-container">
@@ -255,6 +168,7 @@
     </div>
 
     <div class="app-body">
+
       <!-- Kurir & Estimasi -->
       <div class="summary-card">
         <div style="display: flex; align-items: center; gap: 15px;">
@@ -268,23 +182,26 @@
         </div>
       </div>
 
-      <!-- Timeline Pengiriman -->
+      <!-- Timeline -->
       <div class="timeline">
         {% for item in data.history %}
-        <div class="timeline-item {% if item.active %}active{% endif %}">
-          <div class="timeline-dot">
-            <i class="fas fa-{% if item.active or forloop.last %}check{% else %}truck{% endif %}"></i>
-          </div>
-          <div class="timeline-content">
-            <div class="timeline-status">{{ item.status }}</div>
-            <div class="timeline-location">{{ item.lokasi }}</div>
-            <div class="timeline-date">
-              <i class="far fa-clock"></i> {{ item.waktu }}
+          <div class="timeline-item {% if item.active %}active{% endif %}">
+            <div class="timeline-dot">
+              <i class="fas fa-{% if item.active or forloop.last %}check{% else %}truck{% endif %}"></i>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-status">{{ item.status }}</div>
+              <div class="timeline-location">{{ item.lokasi }}</div>
+              <div class="timeline-date">
+                <i class="far fa-clock"></i> {{ item.waktu }}
+              </div>
             </div>
           </div>
-        </div>
         {% endfor %}
       </div>
+
+      <!-- Map (Leaflet) -->
+      <div id="map"></div>
 
       <!-- Penerima -->
       <div class="summary-card">
@@ -294,28 +211,31 @@
         <div>{{ data.penerima }}</div>
         <div style="font-size: 0.9rem; color: #64748b;">{{ data.alamat }}</div>
       </div>
-      <div id="map" style="width: 100%; height: 300px; border-radius: 10px; margin-bottom: 20px;"></div>
 
+      <!-- Button -->
       <a href="{% url 'index' %}" class="btn"><i class="fas fa-arrow-left"></i> Kembali</a>
     </div>
   </div>
 
-  <!-- Script untuk peta -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCXEbAfQkc1Voi4l8-XiK7ZpCWd6CM1RAs&callback=initMap" async defer></script>
-  <script>
-    function initMap() {
-      const defaultLocation = { lat: -6.2088, lng: 106.8456 };
-      const map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 10,
-        center: defaultLocation,
-      });
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-o9N1j7k1ZzY+POYJ+3q79q0dvds0+fKk7LLn4Q8gOuo="
+    crossorigin=""></script>
 
-      new google.maps.Marker({
-        position: defaultLocation,
-        map: map,
-        title: "Lokasi Default"
-      });
-    }
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const map = L.map("map").setView([-6.2088, 106.8456], 12); // Jakarta default
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }).addTo(map);
+
+      L.marker([-6.2088, 106.8456])
+        .addTo(map)
+        .bindPopup("Lokasi Perkiraan Pengiriman")
+        .openPopup();
+    });
   </script>
 </body>
 </html>
