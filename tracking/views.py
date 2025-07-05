@@ -9,7 +9,7 @@ def hasil(request):
         no_resi = request.POST.get('no_resi')
         kurir = request.POST.get('kurir')
 
-        api_key = '8e49f28e0f2f2cf56393c352613eec358e85fb7077ce6f7f453ebb826a7b1f6d'
+        api_key = '42a458c5a036048360db16c653c4d78c1d3ea524ff661c3c6903819f72b1f395'
         url = f"https://api.binderbyte.com/v1/track?api_key={api_key}&courier={kurir}&awb={no_resi}"
 
         response = requests.get(url)
