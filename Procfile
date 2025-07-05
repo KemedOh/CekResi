@@ -1,0 +1,1 @@
+web: gunicorn cekresi_project.wsgi:application
