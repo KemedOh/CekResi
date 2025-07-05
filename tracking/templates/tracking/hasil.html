@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -5,6 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hasil Lacak Resi - Cek Pengiriman</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234361ee'><path d='M8 17a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm8 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3-6V7a1 1 0 0 0-1-1h-2V4a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h1a2 2 0 1 0 4 0h6a2 2 0 1 0 4 0h1a1 1 0 0 0 1-1zm-5-5h2v4h-2V6z'/></svg>">
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCXEbAfQkc1Voi4l8-XiK7ZpCWd6CM1RAs&callback=initMap" async defer></script>
+    <style>
+        #map {
+            height: 300px;
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -319,104 +329,90 @@
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <div class="app-header">
-            <h1>Hasil Pelacakan Resi</h1>
-            <p>Detail status pengiriman paket Anda</p>
+    <div class="container">
+        <!-- Header -->
+        <div class="delivery-header">
+            <div class="courier-info">
+                <div class="courier-logo">
+                    <img src="{% static 'images/'|add:data.kurir|lower|add:'.png' %}" alt="{{ data.kurir }} Logo">
+                </div>
+                <div class="courier-name">{{ data.kurir }}</div>
+            </div>
+            <div id="map"></div>
+            <div class="resi-number">
+                <span>No. Resi: {{ data.no_resi }}</span>
+                <button class="copy-btn">
+                    <i class="far fa-copy"></i> Salin
+                </button>
+            </div>
+
+            <div class="delivery-estimation">
+                <i class="fas fa-clock"></i>
+                <span>{{ data.estimasi }}</span>
+            </div>
         </div>
-        
-        <div class="app-body">
-            {% if data %}
-                <div class="summary-card">
-                    <div class="summary-item">
-                        <div class="summary-icon">
-                            <i class="fas fa-barcode"></i>
-                        </div>
-                        <div class="summary-content">
-                            <div class="summary-label">Nomor Resi</div>
-                            <div class="summary-value">{{ data.no_resi }}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="summary-item">
-                        <div class="summary-icon">
-                            <i class="fas fa-truck"></i>
-                        </div>
-                        <div class="summary-content">
-                            <div class="summary-label">Kurir</div>
-                            <div class="summary-value">{{ data.kurir|upper }}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="summary-item">
-                        <div class="summary-icon">
-                            <i class="fas fa-info-circle"></i>
-                        </div>
-                        <div class="summary-content">
-                            <div class="summary-label">Status</div>
-                            <div class="summary-value">
-                                <span class="status-badge 
-                                    {% if 'terkirim' in data.status|lower %}status-delivered
-                                    {% elif 'transit' in data.status|lower or 'dalam perjalanan' in data.status|lower %}status-transit
-                                    {% else %}status-pending{% endif %}">
-                                    {{ data.status }}
-                                </span>
-                            </div>
-                        </div>
+
+        <!-- Timeline -->
+        <div class="timeline-header">
+            <h3>Riwayat Pengiriman</h3>
+            <button class="refresh-btn">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+        </div>
+
+        <div class="timeline">
+            {% for item in data.history %}
+            <div class="timeline-item {% if item.active %}active{% endif %}">
+                <div class="timeline-dot {% if item.active %}active{% elif forloop.first %}in-transit{% endif %}">
+                    <i class="fas fa-{% if item.active or forloop.last %}check{% else %}truck{% endif %}"></i>
+                </div>
+                <div class="timeline-content">
+                    <div class="timeline-status">{{ item.status }}</div>
+                    <div class="timeline-location">{{ item.lokasi }}</div>
+                    <div class="timeline-date">
+                        <i class="far fa-clock"></i> {{ item.waktu }}
                     </div>
                 </div>
-                
-                <!-- Progress Tracker -->
-                <div class="progress-tracker">
-                    <div class="progress-bar" style="width: 
-                        {% if 'terkirim' in data.status|lower %}100%
-                        {% elif 'transit' in data.status|lower or 'dalam perjalanan' in data.status|lower %}66%
-                        {% else %}33%{% endif %}">
-                    </div>
-                    <div class="progress-steps">
-                        <div class="progress-step {% if 'diterima' in data.status|lower or 'transit' in data.status|lower or 'terkirim' in data.status|lower %}active{% endif %}">
-                            Diterima
-                        </div>
-                        <div class="progress-step {% if 'transit' in data.status|lower or 'terkirim' in data.status|lower %}active{% endif %}">
-                            Dalam Pengiriman
-                        </div>
-                        <div class="progress-step {% if 'terkirim' in data.status|lower %}active{% endif %}">
-                            Terkirim
-                        </div>
-                    </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Informasi Penerima -->
+        <div class="additional-info">
+            <div class="info-card">
+                <div class="info-title">
+                    <i class="fas fa-user"></i> Penerima
                 </div>
-                
-                <!-- Timeline -->
-                <h3 style="margin-bottom: 15px; font-size: 1.1rem;">
-                    <i class="fas fa-history" style="margin-right: 8px; color: var(--accent);"></i> Riwayat Pengiriman
-                </h3>
-                
-                <div class="timeline">
-                    {% for history in data.history %}
-                    <div class="timeline-item">
-                        <div class="timeline-dot {% if loop.first %}active{% endif %}"></div>
-                        <div class="timeline-content">
-                            <div class="timeline-date">{{ history.waktu }}</div>
-                            <div class="timeline-status">{{ history.status }}</div>
-                            <div class="timeline-location">{{ history.lokasi }}</div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <div class="not-found">
-                    <div class="not-found-icon">
-                        <i class="fas fa-box-open"></i>
-                    </div>
-                    <h3>Data tidak ditemukan</h3>
-                    <p>Nomor resi yang Anda cari tidak ditemukan dalam sistem kami</p>
-                </div>
-            {% endif %}
+                <p>{{ data.penerima }}</p>
+                <p>{{ data.alamat }}</p>
+            </div>
             
-            <a href="{% url 'index' %}" class="btn-back">
-                <i class="fas fa-search"></i> Cek Resi Lainnya
-            </a>
+            <button class="contact-btn">
+                <i class="fas fa-headset"></i> Hubungi Kurir
+            </button>
         </div>
     </div>
+
+    <script src="{% static 'js/script.js' %}"></script>
+    // Di dalam file script.js Anda atau di dalam tag <script> di HTML
+        function initMap() {
+            // Lokasi default (misalnya, pusat kota Jakarta)
+            const defaultLocation = { lat: -6.2088, lng: 106.8456 };
+        
+            // Membuat objek peta baru
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 10, // Tingkat zoom awal
+                center: defaultLocation, // Pusat peta awal
+            });
+        
+            // Anda bisa menambahkan marker, polyline, dll. di sini
+            // Contoh: Menambahkan marker di lokasi default
+            new google.maps.Marker({
+                position: defaultLocation,
+                map: map,
+                title: "Lokasi Default"
+            });
+        }
 </body>
+</html>
 </html>
