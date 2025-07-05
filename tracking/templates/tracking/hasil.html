@@ -431,18 +431,27 @@
           </div>
           
           <div class="timeline">
-            {% for item in data.history %}
-            <div class="timeline-item">
-              <div class="timeline-dot {% if forloop.first %}active{% endif %}"></div>
-              <div class="timeline-content">
-                <div class="timeline-status">{{ item.status }}</div>
-                <div class="timeline-location">{{ item.lokasi }}</div>
-                <div class="timeline-date">
-                  <i class="far fa-clock"></i> {{ item.waktu }}
+            {% if data.history %}
+              {% for item in data.history %}
+              <div class="timeline-item {% if item.active %}active{% endif %}">
+                <div class="timeline-dot {% if forloop.first %}active{% endif %}"></div>
+                <div class="timeline-content">
+                  <div class="timeline-status">{{ item.status }}</div>
+                  <div class="timeline-location">
+                    <i class="fas fa-map-marker-alt"></i> {{ item.lokasi }}
+                  </div>
+                  <div class="timeline-date">
+                    <i class="far fa-clock"></i> {{ item.waktu }}
+                  </div>
                 </div>
               </div>
-            </div>
-            {% endfor %}
+              {% endfor %}
+            {% else %}
+              <div class="no-history">
+                <i class="fas fa-info-circle"></i>
+                <p>Riwayat pengiriman belum tersedia</p>
+              </div>
+            {% endif %}
           </div>
         </div>
 
