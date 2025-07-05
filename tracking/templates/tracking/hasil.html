@@ -394,7 +394,26 @@
     </div>
 
     <script src="{% static 'js/script.js' %}"></script>
-    // Di dalam file script.js Anda atau di dalam tag <script> di HTML
+<script>
+    function initMap() {
+        // Lokasi default (misalnya, pusat kota Jakarta)
+        const defaultLocation = { lat: -6.2088, lng: 106.8456 };
+
+        // Membuat objek peta baru
+        const map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 10, // Tingkat zoom awal
+            center: defaultLocation, // Pusat peta awal
+        });
+
+        // Tambahkan marker
+        new google.maps.Marker({
+            position: defaultLocation,
+            map: map,
+            title: "Lokasi Default"
+        });
+    }
+</script>
+
         function initMap() {
             // Lokasi default (misalnya, pusat kota Jakarta)
             const defaultLocation = { lat: -6.2088, lng: 106.8456 };
@@ -414,5 +433,4 @@
             });
         }
 </body>
-</html>
 </html>
