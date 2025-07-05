@@ -3,239 +3,176 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hasil Lacak Resi</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' fill='%234361ee' viewBox='0 0 24 24'><path d='M8 17a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm8 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3-6V7a1 1 0 0 0-1-1h-2V4a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h1a2 2 0 1 0 4 0h6a2 2 0 1 0 4 0h1a1 1 0 0 0 1-1zm-5-5h2v4h-2V6z'/></svg>">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hasil Pelacakan</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-sA+e2u9UzH3msye4U8R+qwFgU4E6LDbi9zW+U0hP+zg=" crossorigin=""/>
-
   <style>
     :root {
-      --primary: #4361ee;
-      --secondary: #3f37c9;
-      --accent: #4895ef;
-      --success: #4cc9f0;
-      --light: #f8f9fa;
-      --dark: #212529;
-      --danger: #f72585;
-      --warning: #f8961e;
+        --primary: #4361ee;
+        --secondary: #3f37c9;
+        --accent: #4895ef;
+        --light: #f8f9fa;
+        --dark: #212529;
+        --danger: #f72585;
     }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      color: var(--dark);
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 30px 15px;
+        color: var(--dark);
     }
-
     .app-container {
-      width: 100%;
-      max-width: 500px;
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-      transition: all 0.3s ease;
+        width: 100%;
+        max-width: 600px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
     }
-
     .app-header {
-      background: linear-gradient(to right, var(--primary), var(--secondary));
-      color: white;
-      padding: 25px;
-      text-align: center;
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        color: white;
+        padding: 25px;
+        text-align: center;
     }
-
-    .app-icon {
-      background: white;
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 0 auto 15px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    .app-header i {
+        font-size: 2rem;
+        margin-bottom: 10px;
     }
-
-    .app-icon i {
-      color: var(--primary);
-      font-size: 1.8rem;
-    }
-
     .app-body {
-      padding: 25px;
+        padding: 25px;
     }
-
     .summary-card {
-      background: var(--light);
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      box-shadow: 0 0 0 1px #e9ecef;
+        background: var(--light);
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     }
-
     .timeline {
-      margin-bottom: 20px;
+        margin-top: 20px;
+        border-left: 2px solid var(--accent);
+        padding-left: 15px;
     }
-
     .timeline-item {
-      display: flex;
-      align-items: start;
-      margin-bottom: 15px;
+        position: relative;
+        margin-bottom: 20px;
     }
-
-    .timeline-dot {
-      width: 20px;
-      height: 20px;
-      background: var(--accent);
-      color: white;
-      border-radius: 50%;
-      text-align: center;
-      line-height: 20px;
-      margin-right: 10px;
-      font-size: 0.8rem;
+    .timeline-item::before {
+        content: "";
+        position: absolute;
+        left: -10px;
+        top: 5px;
+        width: 16px;
+        height: 16px;
+        background: var(--accent);
+        border-radius: 50%;
+        border: 2px solid white;
+        box-shadow: 0 0 0 2px var(--accent);
     }
-
-    .timeline-content {
-      font-size: 0.9rem;
-    }
-
     .timeline-status {
-      font-weight: 600;
-      margin-bottom: 2px;
+        font-weight: 600;
     }
-
-    .timeline-location {
-      color: #64748b;
+    .timeline-location, .timeline-date {
+        font-size: 0.9rem;
+        color: #6c757d;
     }
-
-    .timeline-date {
-      font-size: 0.8rem;
-      color: #adb5bd;
-    }
-
-    .btn {
-      display: inline-block;
-      padding: 14px 20px;
-      background: linear-gradient(to right, var(--primary), var(--secondary));
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      width: 100%;
-      text-align: center;
-      box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
-      text-decoration: none;
-    }
-
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(67, 97, 238, 0.4);
-    }
-
     #map {
-      height: 300px;
-      border-radius: 12px;
-      margin-bottom: 20px;
+        height: 250px;
+        border-radius: 10px;
+        margin-bottom: 25px;
+    }
+    .btn {
+        display: inline-block;
+        padding: 14px 20px;
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        text-align: center;
+        text-decoration: none;
+    }
+    .error-message {
+        background: rgba(247, 37, 133, 0.1);
+        color: var(--danger);
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        text-align: center;
     }
   </style>
 </head>
 <body>
   <div class="app-container">
-    <!-- Header -->
     <div class="app-header">
-      <div class="app-icon">
-        <i class="fas fa-truck"></i>
-      </div>
-      <h1>Hasil Pelacakan</h1>
-      <p>Status paket untuk No. Resi: <strong>{{ data.no_resi }}</strong></p>
+      <i class="fas fa-truck"></i>
+      <h2>Hasil Pelacakan</h2>
+      <p>No. Resi: <strong>{{ data.no_resi }}</strong></p>
     </div>
 
     <div class="app-body">
-
-      <!-- Kurir & Estimasi -->
-      <div class="summary-card">
-        <div style="display: flex; align-items: center; gap: 15px;">
-          <img src="{% static 'images/'|add:data.kurir|lower|add:'.png' %}" alt="{{ data.kurir }}" style="height: 40px;">
-          <div>
-            <div style="font-weight: 600;">{{ data.kurir }}</div>
-            <div style="font-size: 0.85rem; color: #64748b;">
-              <i class="fas fa-clock"></i> Estimasi: {{ data.estimasi }}
-            </div>
-          </div>
+      {% if error %}
+        <div class="error-message">{{ error }}</div>
+      {% elif data %}
+        <!-- Kurir & Estimasi -->
+        <div class="summary-card">
+          <div style="font-weight: bold;">Kurir: {{ data.kurir }}</div>
+          <div>Estimasi Layanan: {{ data.estimasi }}</div>
         </div>
-      </div>
 
-      <!-- Timeline -->
-      <div class="timeline">
-        {% for item in data.history %}
-          <div class="timeline-item {% if item.active %}active{% endif %}">
-            <div class="timeline-dot">
-              <i class="fas fa-{% if item.active or forloop.last %}check{% else %}truck{% endif %}"></i>
-            </div>
-            <div class="timeline-content">
-              <div class="timeline-status">{{ item.status }}</div>
-              <div class="timeline-location">{{ item.lokasi }}</div>
-              <div class="timeline-date">
-                <i class="far fa-clock"></i> {{ item.waktu }}
+        <!-- Penerima -->
+        <div class="summary-card">
+          <div style="font-weight: bold;"><i class="fas fa-user"></i> Penerima:</div>
+          <div>{{ data.penerima }}</div>
+          <div style="font-size: 0.9rem; color: #64748b;">{{ data.alamat }}</div>
+        </div>
+
+        <!-- Peta (Map) -->
+        <div id="map"></div>
+
+        <!-- Riwayat -->
+        <div class="summary-card">
+          <h4>Riwayat Pengiriman</h4>
+          <div class="timeline">
+            {% for item in data.history %}
+              <div class="timeline-item">
+                <div class="timeline-status">{{ item.desc }}</div>
+                <div class="timeline-location"><i class="fas fa-map-marker-alt"></i> {{ item.location }}</div>
+                <div class="timeline-date"><i class="far fa-clock"></i> {{ item.date }}</div>
               </div>
-            </div>
+            {% endfor %}
           </div>
-        {% endfor %}
-      </div>
-
-      <!-- Map (Leaflet) -->
-      <div id="map"></div>
-
-      <!-- Penerima -->
-      <div class="summary-card">
-        <div style="margin-bottom: 8px; font-weight: 600;">
-          <i class="fas fa-user"></i> Penerima
         </div>
-        <div>{{ data.penerima }}</div>
-        <div style="font-size: 0.9rem; color: #64748b;">{{ data.alamat }}</div>
-      </div>
 
-      <!-- Button -->
-      <a href="{% url 'index' %}" class="btn"><i class="fas fa-arrow-left"></i> Kembali</a>
+        <a href="{% url 'index' %}" class="btn"><i class="fas fa-arrow-left"></i> Kembali</a>
+      {% endif %}
     </div>
   </div>
 
   <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-o9N1j7k1ZzY+POYJ+3q79q0dvds0+fKk7LLn4Q8gOuo="
-    crossorigin=""></script>
-
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const map = L.map("map").setView([-6.2088, 106.8456], 12); // Jakarta default
+    // Peta default Jakarta
+    const map = L.map('map').setView([-6.2088, 106.8456], 10);
 
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      }).addTo(map);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
 
-      L.marker([-6.2088, 106.8456])
-        .addTo(map)
-        .bindPopup("Lokasi Perkiraan Pengiriman")
-        .openPopup();
-    });
+    // Marker default
+    L.marker([-6.2088, 106.8456]).addTo(map)
+      .bindPopup("Lokasi Default (Jakarta)").openPopup();
   </script>
 </body>
 </html>
